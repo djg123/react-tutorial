@@ -23,7 +23,7 @@ import qualified Data.ByteString as BS (readFile)
 import Prelude hiding (readFile, writeFile)
 import Data.Aeson hiding (json)
 import Data.Text
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust, fromMaybe)
 
 data Comment = Comment {
       commentText :: Text,
@@ -54,7 +54,7 @@ main = scotty 3000 $ do
 
     post "/api/comments" $ do
       comments <- liftIO $ BS.readFile "comments.json"
-      let jsonComments = fromJust $ (decode $ fromStrict comments :: Maybe [Comment])
+      let jsonComments = fromMaybe [] $ (decode $ fromStrict comments :: Maybe [Comment])
       author <- param "author"
       comment <- param "text"
       let allComments = jsonComments ++ [Comment comment author]
